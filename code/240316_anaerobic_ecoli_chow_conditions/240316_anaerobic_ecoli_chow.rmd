@@ -12,32 +12,45 @@ output:
 
 ## Imports
 
-```{r}
+```{r, echo=FALSE}
+# Install additional packages not already in renv.lock
+install.packages("readxl",
+                 "ggthemes",
+                 "RColorBrewer")
+
+# Load libraries
 library(dplyr)
 library(ggplot2)
 library(magrittr)
 library(readr)
 library(tidyr)
+library(readxl)
+library(ggthemes)
+library(RColorBrewer)
+
+# Update project lockfile if any changes were made
+renv::snapshot()
 ```
 
 ## Parameters
 
 ```{r}
 # Source locations
-src_dirname <- "../../data/tidy/exp=membrane-permeabilization/"
-src_basename <- "2023-03-11.csv"
+src_dir <- paste0("~/Documents/Stanford/Huang_lab_rotation/Chow_derived_media/",
+                  "240316_anaerobic_ecoli_chow_conditions")
+file <- "240314_ecoli_chow_anaerobic.xlsx"
 
 # Destination locations
-dst_dirname <- "../../outputs/draft/exp=membrane-permeabilization/"
+dst_dirname <- "outputs"
 ```
 
 ------------------------------------------------------------------------
 
-# Read
+# Data import
 
 ```{r}
 # Read all csv files
-membrane_ <- read_csv(file.path(src_dirname, src_basename))
+anaerobic_chow_ <- read_excel(file.path(src_dir, file))
 ```
 
 ------------------------------------------------------------------------
