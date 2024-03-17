@@ -34,7 +34,7 @@ renv::snapshot()
 
 ## Parameters
 
-```{r}
+```{r, echo=FALSE}
 # Source locations
 src_dir <- paste0("~/Documents/Stanford/Huang_lab_rotation/Chow_derived_media/",
                   "240316_anaerobic_ecoli_chow_conditions")
@@ -51,6 +51,7 @@ dst_dirname <- "outputs"
 ```{r}
 # Read all csv files
 anaerobic_chow_ <- read_excel(file.path(src_dir, file))
+anaerobic_chow_
 ```
 
 ------------------------------------------------------------------------
