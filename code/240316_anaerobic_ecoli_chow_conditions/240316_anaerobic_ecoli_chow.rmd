@@ -51,32 +51,40 @@ dst_dirname <- "outputs"
 ```{r}
 # Read all csv files
 anaerobic_chow_ <- read_excel(file.path(src_dir, file))
-anaerobic_chow_
+write.csv(anaerobic_chow_, paste0(sub("\\.xlsx$", "", file), ".csv"), 
+          row.names = FALSE)
 ```
 
 ------------------------------------------------------------------------
 
-# Conform
+# Computation
 
-Create file.
+## Raw data transformation
 
 ```{r}
-membrane <- membrane_
+# Clone raw data
+anaerobic_chow <- anaerobic_chow_
+
+# Convert time column to POSIXct format and extract minutes and seconds
+anaerobic_chow$Time <- as.POSIXct(anaerobic_chow$Time)
+anaerobic_chow$Time <- as.numeric(format(anaerobic_chow$Time, "%M")) + 
+  as.numeric(format(anaerobic_chow$Time, "%S")) / 60
+
+# Remove temperature column
+anaerobic_chow <- anaerobic_chow %>%
+  select(-"T° 600")
+
+# Specify relevant columns
+anaerobic_chow <- select(anaerobic_chow, c(Time, E1:H12))
+
+# Preview cleaned table
+head(anaerobic_chow)
 ```
 
-Glimpse.
+## Table manipulation
 
 ```{r}
-glimpse(membrane)
-```
 
-------------------------------------------------------------------------
-
-# Compute - Describe
-
-Compute difference between channels.
-
-```{r}
 # Create channel columns and difference
 wide <-
   membrane %>%
