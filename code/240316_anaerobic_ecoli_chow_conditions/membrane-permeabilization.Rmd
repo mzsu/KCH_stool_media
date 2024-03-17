@@ -1,6 +1,6 @@
 ---
-title: "Membrane permeabilization: Draft analytics"
-author: "Stelios Serghiou"
+title: "240316 Anaerobic Growth of E. coli in chow media conditions"
+author: "Morgan Su"
 date: "`r format(Sys.time(), '%a, %b %d, %Y')`"
 output:
   prettydoc::html_pretty:
