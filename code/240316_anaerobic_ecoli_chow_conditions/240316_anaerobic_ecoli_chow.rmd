@@ -78,54 +78,60 @@ anaerobic_chow <- anaerobic_chow %>%
 anaerobic_chow <- select(anaerobic_chow, c(Time, E1:H12))
 
 # Preview cleaned table
-head(anaerobic_chow)
+head(anaerobic_chow, 20)
 ```
 
 ## Table manipulation
 
 ```{r}
+# Define conditions of the growth curve in a list
+conditions <- list("BHI", "BHIS", "BHISD7", "BHISD7.ac", "15chowSD7.pbs", 
+                   "15chowSD7.pbs.ac", "15chowSD7.pb", "15chowSD7.pb.ac", 
+                   "BHIS+15chowSD7.pbs", "BHIS+15chowSD7.pbs.ac", 
+                   "BHIS+15chowSD7.pb", "BHIS+15chowSD7.pb.ac")
 
-# Create channel columns and difference
-wide <-
-  membrane %>%
-  pivot_wider(
-    id_cols = condition,
-    names_from = channel,
-    names_glue = "channel_{channel}",
-    values_from = mean_intensity
-  ) %>%
-  mutate(diffs = channel_1 - channel_2)
+# Iterate through each entry in "conditions" and add as a new column in df
+for (i in seq_along(conditions)) {
+  column_name <- conditions[[i]]
+  column_values <- rowMeans(select(anaerobic_chow, 
+                                   paste0("E", i), 
+                                   paste0("F", i), 
+                                   paste0("G", i)))
+  blanks <- anaerobic_chow[[paste0("H", i)]]
+  anaerobic_chow[[column_name]] <- column_values - blanks
+}
 
-# Compute mean in differences
-mean_diff <- wide %>%
-  pull(diffs) %>%
-  mean()
+# Remove non-averaged columns
+anaerobic_chow_avg <- select(anaerobic_chow, -c("E1":"H12"))
 
-# Print mean
-sprintf("Mean intensity difference in Channel 1 vs. 2 = %.1f units", mean_diff)
+# Preview averaged table
+head(anaerobic_chow_avg)
+```
+
+```{r}
+# Create table to calculate derivatives (growth rate)
+
+
 ```
 
 ------------------------------------------------------------------------
 
-# Compute - Visualize
+# Visualizations
 
-## Histograms
+## Growth curve
 
 ```{r}
 # Plot
-membrane_histogram <-
-  membrane %>%
-  mutate(channel = paste("Channel", channel)) %>%
-  ggplot(aes(x = mean_intensity, fill = channel, color = channel)) +
-  geom_histogram(alpha = 0.7) +
-  facet_wrap(vars(condition)) +
-  labs(x = "Mean intensity (units)", y = "Counts") +
-  theme_minimal() +
-  theme(
-    axis.title.x = element_text(vjust = -1),
-    axis.title.y = element_text(vjust = 3),
-    legend.title = element_blank()
-  )
+
+# Define conditions of the growth curve as a df
+conditions_df <- as.data.frame(conditions, check.names = FALSE) 
+
+gc <- ggplot(anaerobic_chow_avg, aes(x = Time)) +
+  geom_line(aes(y = .data$'BHIS'), col = "darkred")
+
+gc
+```
+
 
 # Save
 ggsave(
